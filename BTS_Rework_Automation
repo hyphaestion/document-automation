@@ -1,0 +1,86 @@
+#This code will need the MailMerge module to run. 
+# In order to this (on Windows), press the Start + R, type in cmd, then type in: 
+
+#py -m pip install docx-mailmerge 
+
+# This code may still not work, type in the magnifying glass Anaconda Prompt, then type in conda install lxml, 
+#update all packages.
+
+
+#Uncomment the statement below to then finally have this run, we need pip install to run natively in the IDE for this to work.
+
+#!pip install docx-mailmerge
+
+from mailmerge import MailMerge #importing our mailmerge library
+
+import os #importing operating system library
+
+template = 'bts_event_rework_template.docx' #loading our template
+document = MailMerge(template) #passing it through mail merge
+field_name = (document.get_merge_fields()) #loading the field names
+
+print(field_name) #used for testing, commment out once done.
+
+#dictionary values that will affect what the document says depending on user input for part number. listed as key:value pairs
+dictionary_partno = {'a': '7081051-003', 'b':'7081051-004', 'c':'7081051-005', 'd':'7081032-010'}
+dictionary_descript = {'a': "FAB, ENLITE3, 48-UP, NO TABS", 'b': 'FAB, ENLITE3, 48-UP, NO TABS, OUS', 'c': 'FAB, GS4, 48-UP, NO TABS, OUS', 'd': "60%MA WITH TAB, 48UP, ENLITE2"}
+dictionary_rev = {'a': "04", 'b': '01', 'c': '01', 'd': "E"}
+dictionary_refdoc = {'a': "Enlite 3 and Guardian Sensor 4– 10562084DOC, 10553631DOC, AP7081051DOC", 'b': 'Enlite 3 and Guardian Sensor 4– 10562084DOC, 10553631DOC, AP7081051DOC', 'c': 'Enlite 3 and Guardian Sensor 4– 10562084DOC, 10553631DOC, AP7081051DOC', 'd': "Enlite Enhanced – AP7081032DOC"}
+#dictionary_petri = {'y': '☐Update quantity on petri dish and storage labels.', 'n': ''}
+
+#computer asks user questions, the answers are set to a variable that will change the document
+inp_by = input('What is your name? \n> ')
+
+inp_ncmr = input('What is the NCMR number? \n> ')
+
+inp_partno = input('What is the part number? Enter the corresponding lowercase letter: \n a = 7081051-003 (E3-US) \n b = 7081051-004 (E3-OUS) \n c = 7081051-005(GS4/Zeus) \n d = 7081032-010 (EE/E2) \n> ')
+
+inp_op = input('What was the last opened operation? \n> ')
+
+# the dictionary values come into play here, set to variables that will affect the document
+part_no = dictionary_partno[inp_partno]
+
+descript = dictionary_descript[inp_partno]
+
+rev = dictionary_rev[inp_partno]
+
+ref_doc = dictionary_refdoc[inp_partno]
+
+#going back to the input questions
+inp_wo = input('What is the work order number? \n> ')
+
+inp_lot = input('What is the lot number? \n> ')
+
+inp_qty = input('What is the quantity? \n> ')
+
+#inp_petri = input('Was OP110 completed, (y/n)? \n> ')
+
+#petri = dictionary_petri[inp_petri]
+
+
+##########################################################################################
+#inp_cwd = input(r'Please paste the file path of where you would like to save. > ') #asks user for file save location
+
+inp_cwd =r"C:\Users\garcig121\OneDrive - Medtronic PLC\1. NCMRs\1. Attachments\2. BTS Reworks\2022\3. March\Week 4"    #if you are working with multiple documents, comment out the previous line by typing the hashtag symbol #, and just set the working directory to a hard variable inside of the quotes of the r""
+###########################################################################################
+
+
+
+#MailMerge is now combining the input values into the word document
+document.merge(REV = rev, OP=inp_op, REF_DOC = ref_doc, BY_PERSON=inp_by, NCMR=inp_ncmr,PART_NO=part_no, DESCRIPT=descript, WO=inp_wo, LOT=inp_lot, QTY=inp_qty)
+
+document_name = f'NCMR{inp_ncmr}-Attachment 1-BTS Rework-{inp_lot}.docx' #creating a variable that will incorporate user NCMR and lot number to the file name
+
+os.chdir(inp_cwd) #changes our working directory
+
+document.write(document_name) #this will save our work, do not modify
+
+
+wd = os.getcwd() # obtains our working directory (where we are in the computer)
+
+
+path = wd + '/' + document_name # concates the strings together
+
+fd = os.startfile(path) #launches the window our file is in.
+
+os._exit(00) #restarts the kernel, ensuring that previous entries do not go onto the current document
