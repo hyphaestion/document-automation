@@ -1,5 +1,5 @@
-# document-automation
-# Repository for Document Automation at Medtronic
+# BTS Document Automation
+
 
 The purpose of this script is to automate changes necessary for Buffer Testing Solution Reworks used in manufacturing. 
 
